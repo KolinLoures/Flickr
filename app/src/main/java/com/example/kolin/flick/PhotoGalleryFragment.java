@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -33,6 +35,7 @@ public class PhotoGalleryFragment extends Fragment {
     public RecyclerView mPhotoRecyclerView;
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter adapter;
+
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -91,7 +94,7 @@ public class PhotoGalleryFragment extends Fragment {
             mPhotoRecyclerView.setAdapter(adapter);
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {
 
         private ImageView mItemImageView;
 
@@ -104,7 +107,11 @@ public class PhotoGalleryFragment extends Fragment {
             mItemImageView.setImageDrawable(drawable);
         }
 
+        @Override
+        public void onClick(View v) {
+            GalleryItem galleryItem = mItems.get(getAdapterPosition());
 
+        }
     }
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder>{
@@ -129,8 +136,9 @@ public class PhotoGalleryFragment extends Fragment {
             holder.bindDrawable(placeHolder);
 //            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getmUrl());
 
-            Picasso.with(getActivity().getApplicationContext()).load(galleryItem.getmUrl())
-                    .into(holder);
+            Picasso.with(getActivity()).load(galleryItem.getmUrl())
+                    .placeholder(R.drawable.icc_plus)
+                    .into(holder.mItemImageView);
         }
 
 
