@@ -47,7 +47,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 
     public ThumbnailDownloader(Handler responseHandler) {
         super(TAG);
-        mRequestHandler = responseHandler;
+        mResponseHandler = responseHandler;
     }
 
     public void queueThumbnail(T target, String url){
