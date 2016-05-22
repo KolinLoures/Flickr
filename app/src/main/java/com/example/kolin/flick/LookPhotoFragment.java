@@ -42,8 +42,9 @@ public class LookPhotoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_look_photo, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         PagerAdapter pagerAdapter = new PagerAdapter(getFragmentManager(), items);
-        viewPager.setCurrentItem(pos);
+
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(pos);
         return view;
     }
 
@@ -61,6 +62,10 @@ public class LookPhotoFragment extends Fragment {
             return list.size();
         }
 
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+        }
 
         @Override
         public Fragment getItem(int position) {
