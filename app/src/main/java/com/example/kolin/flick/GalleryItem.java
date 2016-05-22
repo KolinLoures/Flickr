@@ -1,9 +1,12 @@
 package com.example.kolin.flick;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by kolin on 20.05.2016.
  */
-public class GalleryItem {
+public class GalleryItem implements Parcelable {
     private String mCaption;
     private String mId;
     private String mUrl;
@@ -38,5 +41,18 @@ public class GalleryItem {
         return "GalleryItem{" +
                 "mCaption='" + mCaption + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mCaption);
+        dest.writeString(mId);
+        dest.writeString(mUrl);
+
     }
 }

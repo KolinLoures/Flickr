@@ -3,13 +3,13 @@ package com.example.kolin.flick;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,6 +17,7 @@ public class LookPhotoFragment extends Fragment {
 
     private ViewPager viewPager;
     private List<GalleryItem> items;
+    private int pos;
 
     public LookPhotoFragment() {
         // Required empty public constructor
@@ -25,6 +26,13 @@ public class LookPhotoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        items = new ArrayList<>();
+        if (bundle != null){
+            items = bundle.getParcelableArrayList("LIST");
+            pos = bundle.getInt("pos");
+        }
+
 
     }
 
@@ -32,20 +40,18 @@ public class LookPhotoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_look_photo, container, false);
-
-        viewPager = (ViewPager) container.findViewById(R.id.view_pager);
-
-        PagerAdapter pagerAdapter = new PageAdapter(getFragmentManager(),items);
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        PagerAdapter pagerAdapter = new PagerAdapter(getFragmentManager(), items);
+        viewPager.setCurrentItem(pos);
         viewPager.setAdapter(pagerAdapter);
-
         return view;
     }
 
-    public static class PageAdapter extends FragmentStatePagerAdapter{
+    public static class PagerAdapter extends FragmentPagerAdapter {
 
         private List<GalleryItem> list;
 
-        public PageAdapter(FragmentManager fm, List<GalleryItem> list) {
+        public PagerAdapter(FragmentManager fm, List<GalleryItem> list) {
             super(fm);
             this.list = list;
         }
@@ -59,15 +65,7 @@ public class LookPhotoFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             GalleryItem galleryItem = list.get(position);
-            return LookPhotoFragment.newInstance(galleryItem.getmUrl());
+            return PageFragment.newInstance(galleryItem);
         }
-
-
     }
-
-    public static LookPhotoFragment newInstance(String url){
-        return null;
-    }
-
-
 }
