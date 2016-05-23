@@ -77,8 +77,6 @@ public class PhotoGalleryFragment extends Fragment {
                 .build();
         MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
 
-
-
         Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
 
         call.enqueue(new Callback<Photo>() {
