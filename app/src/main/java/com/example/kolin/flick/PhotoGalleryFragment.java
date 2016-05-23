@@ -1,7 +1,6 @@
 package com.example.kolin.flick;
 
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -20,11 +19,24 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by kolin on 20.05.2016.
  */
 public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PhotoGalleryFragment";
+
+    private static final String URL = "https://api.flickr.com/services/rest/";
+    private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
+
+    private OkHttpClient client;
 
     private List<GalleryItem> mItems = new ArrayList<>();
     public RecyclerView mPhotoRecyclerView;
@@ -40,8 +52,13 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
         Log.i(TAG, "Background thread started");
+
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
     }
 
     @Nullable
@@ -53,9 +70,34 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         adapter = new PhotoAdapter();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
+
+
+
+        Call<List<GalleryItem>> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
+
+        call.enqueue(new Callback<List<GalleryItem>>() {
+            @Override
+            public void onResponse(Call<List<GalleryItem>> call, Response<List<GalleryItem>> response) {
+                List<GalleryItem> list = response.body();
+                adapter.add(list);
+            }
+
+            @Override
+            public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
+
+            }
+        });
         mPhotoRecyclerView.setAdapter(adapter);
 
-        new FetchItemsTask().execute();
+
+
+//        new FetchItemsTask().execute();
 
 //        Handler responseHandler = new Handler();
 //        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -167,20 +209,20 @@ public class PhotoGalleryFragment extends Fragment {
 
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>>{
-
-        @Override
-        protected List<GalleryItem> doInBackground(Void... params) {
-            return new FlickrFetchr().fetchItems();
-        }
-
-        @Override
-        protected void onPostExecute(List<GalleryItem> galleryItems) {
-            mItems = galleryItems;
-            adapter.add(galleryItems);
-
-            setupAdapter();
-        }
-    }
+//    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>>{
+//
+//        @Override
+//        protected List<GalleryItem> doInBackground(Void... params) {
+//            return new FlickrFetchr().fetchItems();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<GalleryItem> galleryItems) {
+//            mItems = galleryItems;
+//            adapter.add(galleryItems);
+//
+//            setupAdapter();
+//        }
+//    }
 
 }
