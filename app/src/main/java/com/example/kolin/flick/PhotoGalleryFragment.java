@@ -47,6 +47,7 @@ public class PhotoGalleryFragment extends Fragment {
     private PhotoAdapter adapter;
 
 
+
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
