@@ -1,10 +1,15 @@
 
 package com.example.kolin.flick;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Photo_ {
+public class Photo_ implements Parcelable {
 
     private String id;
     private String owner;
@@ -15,10 +20,51 @@ public class Photo_ {
     private Integer ispublic;
     private Integer isfriend;
     private Integer isfamily;
+    @SerializedName("url_s")
     private String urlS;
     private String heightS;
     private String widthS;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    protected Photo_(Parcel in) {
+        id = in.readString();
+        owner = in.readString();
+        secret = in.readString();
+        server = in.readString();
+        title = in.readString();
+        urlS = in.readString();
+        heightS = in.readString();
+        widthS = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(owner);
+        dest.writeString(secret);
+        dest.writeString(server);
+        dest.writeString(title);
+        dest.writeString(urlS);
+        dest.writeString(heightS);
+        dest.writeString(widthS);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Photo_> CREATOR = new Creator<Photo_>() {
+        @Override
+        public Photo_ createFromParcel(Parcel in) {
+            return new Photo_(in);
+        }
+
+        @Override
+        public Photo_[] newArray(int size) {
+            return new Photo_[size];
+        }
+    };
 
     /**
      *

@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface MyApiEndpointInterface {
 
     @GET("?method=flickr.photos.getRecent")
-    Call<List<GalleryItem>> getRecent(@Query("api_key") String apiKey,
+    Call<Photo> getRecent(@Query("api_key") String apiKey,
                                       @Query("format") String format,
                                       @Query("nojsoncallback") Integer nojsoncallback,
                                       @Query("extras") String extras);

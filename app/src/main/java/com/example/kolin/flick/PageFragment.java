@@ -16,10 +16,10 @@ public class PageFragment extends Fragment {
     private String url;
 
 
-    public static PageFragment newInstance(GalleryItem galleryItem) {
+    public static PageFragment newInstance(Photo_ galleryItem) {
 
         Bundle args = new Bundle();
-        args.putString("urlCap", galleryItem.getmUrl());
+        args.putString("urlCap", galleryItem.getUrlS());
         PageFragment fragment = new PageFragment();
         fragment.setArguments(args);
         return fragment;

@@ -16,7 +16,7 @@ import java.util.List;
 public class LookPhotoFragment extends Fragment {
 
     private ViewPager viewPager;
-    private List<GalleryItem> items;
+    private List<Photo_> items;
     private int pos;
 
     public LookPhotoFragment() {
@@ -50,9 +50,9 @@ public class LookPhotoFragment extends Fragment {
 
     public static class PagerAdapter extends FragmentPagerAdapter {
 
-        private List<GalleryItem> list;
+        private List<Photo_> list;
 
-        public PagerAdapter(FragmentManager fm, List<GalleryItem> list) {
+        public PagerAdapter(FragmentManager fm, List<Photo_> list) {
             super(fm);
             this.list = list;
         }
@@ -69,7 +69,7 @@ public class LookPhotoFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            GalleryItem galleryItem = list.get(position);
+            Photo_ galleryItem = list.get(position);
             return PageFragment.newInstance(galleryItem);
         }
     }

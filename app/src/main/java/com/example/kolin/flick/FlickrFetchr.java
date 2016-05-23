@@ -94,14 +94,14 @@ public class FlickrFetchr {
 //        for (int i = 0; i < photosJsonArray.length(); i++){
 //            JSONObject photoJsonObject = photosJsonArray.getJSONObject(i);
 //            GalleryItem item = new GalleryItem();
-//            item.setmId(photoJsonObject.getString("id"));
+//            item.setId(photoJsonObject.getString("id"));
 //            item.setmCaption(photoJsonObject.getString("title"));
 //
 //            if (!photoJsonObject.has("url_s")){
 //                continue;
 //            }
 //
-//            item.setmUrl(photoJsonObject.getString("url_s"));
+//            item.setUrl_s(photoJsonObject.getString("url_s"));
 //            items.add(item);
 //        }
 //    }

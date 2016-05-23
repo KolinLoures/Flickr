@@ -38,7 +38,7 @@ public class PhotoGalleryFragment extends Fragment {
 
     private OkHttpClient client;
 
-    private List<GalleryItem> mItems = new ArrayList<>();
+    private List<Photo_> mItems = new ArrayList<>();
     public RecyclerView mPhotoRecyclerView;
 //    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter adapter;
@@ -79,17 +79,18 @@ public class PhotoGalleryFragment extends Fragment {
 
 
 
-        Call<List<GalleryItem>> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
+        Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
 
-        call.enqueue(new Callback<List<GalleryItem>>() {
+        call.enqueue(new Callback<Photo>() {
             @Override
-            public void onResponse(Call<List<GalleryItem>> call, Response<List<GalleryItem>> response) {
-                List<GalleryItem> list = response.body();
+            public void onResponse(Call<Photo> call, Response<Photo> response) {
+                Photos photos = response.body().getPhotos();
+                List<Photo_> list = photos.getPhoto();
                 adapter.add(list);
             }
 
             @Override
-            public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
+            public void onFailure(Call<Photo> call, Throwable t) {
 
             }
         });
@@ -157,14 +158,13 @@ public class PhotoGalleryFragment extends Fragment {
 
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.container, lookPhotoFragment);
-
             ft.commit();
         }
     }
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder>{
 
-        private List<GalleryItem> mGalleryItems;
+        private List<Photo_> mGalleryItems;
 
         public PhotoAdapter() {
             mGalleryItems = new ArrayList<>();
@@ -180,12 +180,12 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(PhotoHolder holder, int position) {
-            GalleryItem galleryItem = mGalleryItems.get(position);
+            Photo_ galleryItem = mGalleryItems.get(position);
             Drawable placeHolder = getResources().getDrawable(R.drawable.icc_plus);
             holder.bindDrawable(placeHolder);
-//            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getmUrl());
+//            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getUrl_s());
 
-            Picasso.with(getActivity()).load(galleryItem.getmUrl())
+            Picasso.with(getActivity()).load(galleryItem.getUrlS())
                     .placeholder(R.drawable.icc_plus)
                     .into(holder.mItemImageView);
         }
@@ -198,8 +198,9 @@ public class PhotoGalleryFragment extends Fragment {
 
 
 
-        public void add(List<GalleryItem> galleryItems) {
+        public void add(List<Photo_> galleryItems) {
             mGalleryItems.addAll(galleryItems);
+            mItems.addAll(mGalleryItems);
             notifyDataSetChanged();
             //notifyItemRangeInserted(mGalleryItems.size()+galleryItems.size(), galleryItems.size());
 

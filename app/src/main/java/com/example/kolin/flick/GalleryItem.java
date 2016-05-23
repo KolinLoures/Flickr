@@ -3,23 +3,19 @@ package com.example.kolin.flick;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by kolin on 20.05.2016.
  */
 public class GalleryItem implements Parcelable {
     private String mCaption;
-    @SerializedName("id")
-    private String mId;
-    @SerializedName("url_s")
-    private String mUrl;
+    private String id;
+    private String urlS;
 
 
     protected GalleryItem(Parcel in) {
         mCaption = in.readString();
-        mId = in.readString();
-        mUrl = in.readString();
+        id = in.readString();
+        urlS = in.readString();
     }
 
     public static final Creator<GalleryItem> CREATOR = new Creator<GalleryItem>() {
@@ -42,20 +38,20 @@ public class GalleryItem implements Parcelable {
         this.mCaption = mCaption;
     }
 
-    public String getmId() {
-        return mId;
+    public String getId() {
+        return id;
     }
 
-    public void setmId(String mId) {
-        this.mId = mId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getmUrl() {
-        return mUrl;
+        return urlS;
     }
 
     public void setmUrl(String mUrl) {
-        this.mUrl = mUrl;
+        this.urlS = mUrl;
     }
 
     @Override
@@ -73,8 +69,8 @@ public class GalleryItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mCaption);
-        dest.writeString(mId);
-        dest.writeString(mUrl);
+        dest.writeString(id);
+        dest.writeString(urlS);
 
     }
 }
