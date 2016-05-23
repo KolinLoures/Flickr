@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,6 +37,8 @@ public class PhotoGalleryFragment extends Fragment {
     private static final String URL = "https://api.flickr.com/services/rest/";
     private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
 
+    private SwipeRefreshLayout swipeContainer;
+
     private OkHttpClient client;
 
     private List<Photo_> mItems = new ArrayList<>();
@@ -59,17 +62,11 @@ public class PhotoGalleryFragment extends Fragment {
         client = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build();
+        adapter = new PhotoAdapter();
+        load();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
-
-        mPhotoRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_photo_gallery_recycler_view);
-        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-
-        adapter = new PhotoAdapter();
+    public void load(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
                 .client(client)
@@ -82,9 +79,11 @@ public class PhotoGalleryFragment extends Fragment {
         call.enqueue(new Callback<Photo>() {
             @Override
             public void onResponse(Call<Photo> call, Response<Photo> response) {
+                adapter.clear();
                 Photos photos = response.body().getPhotos();
                 List<Photo_> list = photos.getPhoto();
                 adapter.add(list);
+                swipeContainer.setRefreshing(false);
             }
 
             @Override
@@ -92,6 +91,31 @@ public class PhotoGalleryFragment extends Fragment {
 
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
+
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                load();
+            }
+        });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        mPhotoRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_photo_gallery_recycler_view);
+        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+
+
+
         mPhotoRecyclerView.setAdapter(adapter);
 
 
@@ -202,6 +226,11 @@ public class PhotoGalleryFragment extends Fragment {
             notifyDataSetChanged();
             //notifyItemRangeInserted(mGalleryItems.size()+galleryItems.size(), galleryItems.size());
 
+        }
+
+        public void clear(){
+            mGalleryItems.clear();
+            notifyDataSetChanged();
         }
 
 
