@@ -66,10 +66,9 @@ public class PhotoGalleryFragment extends Fragment {
         setRetainInstance(true);
         Log.i(TAG, "Background thread started");
 
-        Intent i = UpdateService.newIntent(getActivity());
-        getActivity().startService(i);
 
-        scheduleAlarm();
+        UpdateService.setServiceAlarm(getActivity(), true);
+
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
@@ -80,27 +79,23 @@ public class PhotoGalleryFragment extends Fragment {
         load();
     }
 
-    public void onStartService(View v){
-
-    }
 
     @Override
     public void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter(UpdateService.ACTION);
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(testReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(testReceiver, filter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(testReceiver);
     }
 
     private BroadcastReceiver testReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            adapter.clear();
             List<Photo_> list = intent.getParcelableArrayListExtra("list");
             adapter.add(list);
         }
@@ -133,15 +128,19 @@ public class PhotoGalleryFragment extends Fragment {
         });
     }
 
-    public void scheduleAlarm(){
-        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),
-                AlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long firstMIllis = System.currentTimeMillis();
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMIllis, AlarmManager.INTERVAL_HALF_HOUR,
-                pendingIntent);
-    }
+//    public void scheduleAlarm(){
+//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),
+//                AlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        long firstMillis = System.currentTimeMillis();
+//        alarmManager.setInexactRepeating(AlarmManager.RTC, firstMillis, 1000,
+//                pendingIntent);
+//        intent = new Intent(getContext(), AlarmReceiver.class);
+//        pendingIntent = PendingIntent.getBroadcast(getActivity(),1, intent, 0);
+//        alarmManager.setInexactRepeating(AlarmManager.RTC, firstMillis, 1000, pendingIntent);
+//
+//    }
 
     @Nullable
     @Override
@@ -163,40 +162,19 @@ public class PhotoGalleryFragment extends Fragment {
 
         mPhotoRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_photo_gallery_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-
-
-
         mPhotoRecyclerView.setAdapter(adapter);
-
-
-
-//        new FetchItemsTask().execute();
-
-//        Handler responseHandler = new Handler();
-//        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
-//        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
-//            @Override
-//            public void onThumbnailDownloader(PhotoHolder target, Bitmap thumbnail) {
-//                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
-//                target.bindDrawable(drawable);
-//            }
-//        });
-//        mThumbnailDownloader.start();
-//        mThumbnailDownloader.getLooper();
-
         return v;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        mThumbnailDownloader.clearQueue();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        mThumbnailDownloader.quit();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(testReceiver);
         Log.i(TAG, "Background thread destroyed");
     }
 
@@ -287,20 +265,5 @@ public class PhotoGalleryFragment extends Fragment {
 
     }
 
-//    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>>{
-//
-//        @Override
-//        protected List<GalleryItem> doInBackground(Void... params) {
-//            return new FlickrFetchr().fetchItems();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<GalleryItem> galleryItems) {
-//            mItems = galleryItems;
-//            adapter.add(galleryItems);
-//
-//            setupAdapter();
-//        }
-//    }
 
 }

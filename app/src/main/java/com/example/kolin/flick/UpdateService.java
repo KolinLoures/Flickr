@@ -1,12 +1,15 @@
 package com.example.kolin.flick;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
@@ -30,6 +33,7 @@ public class UpdateService extends IntentService {
 
     public static final String ACTION = "com.example.kolin.flick.UpdateService";
 
+
     public UpdateService() {
         super("UpdateService");
     }
@@ -37,7 +41,6 @@ public class UpdateService extends IntentService {
     public static Intent newIntent(Context context){
         return new Intent(context, UpdateService.class);
     }
-
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -48,7 +51,6 @@ public class UpdateService extends IntentService {
         if (!isNetworkAvailableAndConnected()){
             return;
         }
-        String val = intent.getStringExtra("receiver");
         Intent in = new Intent(ACTION);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
@@ -77,6 +79,22 @@ public class UpdateService extends IntentService {
 
         return isNetworkConnected;
     }
+
+    public static void setServiceAlarm(Context context, boolean isOn){
+        Intent i = UpdateService.newIntent(context);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, i, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (isOn)
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 6000,
+                    pendingIntent);
+        else {
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
+    }
+
+
 
 
 }
