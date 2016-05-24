@@ -1,11 +1,18 @@
 package com.example.kolin.flick;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +46,7 @@ public class PhotoGalleryFragment extends Fragment {
 
     private SwipeRefreshLayout swipeContainer;
 
+
     private OkHttpClient client;
 
     private List<Photo_> mItems = new ArrayList<>();
@@ -58,6 +66,11 @@ public class PhotoGalleryFragment extends Fragment {
         setRetainInstance(true);
         Log.i(TAG, "Background thread started");
 
+        Intent i = UpdateService.newIntent(getActivity());
+        getActivity().startService(i);
+
+        scheduleAlarm();
+
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         client = new OkHttpClient.Builder()
@@ -66,6 +79,32 @@ public class PhotoGalleryFragment extends Fragment {
         adapter = new PhotoAdapter();
         load();
     }
+
+    public void onStartService(View v){
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UpdateService.ACTION);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(testReceiver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(testReceiver);
+    }
+
+    private BroadcastReceiver testReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            List<Photo_> list = intent.getParcelableArrayListExtra("list");
+            adapter.add(list);
+        }
+    };
 
     public void load(){
         Retrofit retrofit = new Retrofit.Builder()
@@ -92,6 +131,16 @@ public class PhotoGalleryFragment extends Fragment {
 
             }
         });
+    }
+
+    public void scheduleAlarm(){
+        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),
+                AlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long firstMIllis = System.currentTimeMillis();
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMIllis, AlarmManager.INTERVAL_HALF_HOUR,
+                pendingIntent);
     }
 
     @Nullable

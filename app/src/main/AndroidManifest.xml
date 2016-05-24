@@ -3,6 +3,7 @@
     package="com.example.kolin.flick">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name=".AlarmReceiver"
+            android:process="remote">
+        </receiver>
+        <service android:name=".UpdateService"
+            android:exported="false"/>
     </application>
 
 </manifest>
