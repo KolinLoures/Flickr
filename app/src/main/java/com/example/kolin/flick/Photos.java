@@ -78,29 +78,14 @@ public class Photos {
         return total;
     }
 
-    /**
-     *
-     * @param total
-     * The total
-     */
     public void setTotal(Integer total) {
         this.total = total;
     }
 
-    /**
-     *
-     * @return
-     * The photo
-     */
     public List<Photo_> getPhoto() {
         return photo;
     }
 
-    /**
-     *
-     * @param photo
-     * The photo
-     */
     public void setPhoto(List<Photo_> photo) {
         this.photo = photo;
     }

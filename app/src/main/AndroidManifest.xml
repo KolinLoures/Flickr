@@ -18,10 +18,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlarmReceiver"
-            android:process=":remote">
-        </receiver>
-
         <service android:name="com.example.kolin.flick.UpdateService"
             android:exported="false"/>
 

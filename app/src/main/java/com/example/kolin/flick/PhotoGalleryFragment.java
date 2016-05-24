@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +52,6 @@ public class PhotoGalleryFragment extends Fragment {
 
     private List<Photo_> mItems = new ArrayList<>();
     public RecyclerView mPhotoRecyclerView;
-//    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter adapter;
 
 
@@ -65,6 +65,8 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Log.i(TAG, "Background thread started");
+
+
 
 
         UpdateService.setServiceAlarm(getActivity(), true);
@@ -128,24 +130,12 @@ public class PhotoGalleryFragment extends Fragment {
         });
     }
 
-//    public void scheduleAlarm(){
-//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),
-//                AlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        long firstMillis = System.currentTimeMillis();
-//        alarmManager.setInexactRepeating(AlarmManager.RTC, firstMillis, 1000,
-//                pendingIntent);
-//        intent = new Intent(getContext(), AlarmReceiver.class);
-//        pendingIntent = PendingIntent.getBroadcast(getActivity(),1, intent, 0);
-//        alarmManager.setInexactRepeating(AlarmManager.RTC, firstMillis, 1000, pendingIntent);
-//
-//    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
+
 
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -178,9 +168,6 @@ public class PhotoGalleryFragment extends Fragment {
         Log.i(TAG, "Background thread destroyed");
     }
 
-    private void setupAdapter() {
-            mPhotoRecyclerView.setAdapter(adapter);
-    }
 
     private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -233,7 +220,6 @@ public class PhotoGalleryFragment extends Fragment {
             Photo_ galleryItem = mGalleryItems.get(position);
             Drawable placeHolder = getResources().getDrawable(R.drawable.icc_plus);
             holder.bindDrawable(placeHolder);
-//            mThumbnailDownloader.queueThumbnail(holder, galleryItem.getUrl_s());
 
             Picasso.with(getActivity()).load(galleryItem.getUrlS())
                     .placeholder(R.drawable.icc_plus)
@@ -252,18 +238,11 @@ public class PhotoGalleryFragment extends Fragment {
             mGalleryItems.addAll(galleryItems);
             mItems.addAll(mGalleryItems);
             notifyDataSetChanged();
-            //notifyItemRangeInserted(mGalleryItems.size()+galleryItems.size(), galleryItems.size());
-
         }
 
         public void clear(){
             mGalleryItems.clear();
             notifyDataSetChanged();
         }
-
-
-
     }
-
-
 }
