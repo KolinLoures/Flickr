@@ -1,5 +1,6 @@
 package com.example.kolin.flick;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,7 +23,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoGalleryActivity extends AppCompatActivity {
+public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGalleryFragment.OnSelectedListener {
 
 
     private DrawerLayout drawerLayout;
@@ -113,6 +114,13 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         adapter.addFragment(new TileFragment(),"Tile");
         adapter.addFragment(new CardFragment(), "Card");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSelected(Photo_ p) {
+        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+        intent.putExtra("Photo", p);
+        startActivity(intent);
     }
 
     static class Adapter extends FragmentPagerAdapter{

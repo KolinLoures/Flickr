@@ -1,5 +1,6 @@
 package com.example.kolin.flick;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,18 +41,20 @@ public class PhotoGalleryFragment extends Fragment {
 
     private SwipeRefreshLayout swipeContainer;
 
-
-    private OkHttpClient client;
+    private OnSelectedListener listener;
 
     private List<Photo_> mItems = new ArrayList<>();
     public RecyclerView mPhotoRecyclerView;
     private PhotoAdapter adapter;
 
-
-
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
+
+    public interface OnSelectedListener {
+        void onSelected(Photo_ p);
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +65,8 @@ public class PhotoGalleryFragment extends Fragment {
         UpdateService.setServiceAlarm(getActivity(), true);
         load();
     }
+
+
 
 
     @Override
@@ -107,6 +112,16 @@ public class PhotoGalleryFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onAttach(Activity a) {
+        super.onAttach(a);
+
+        try{
+            listener = (OnSelectedListener) a;
+        } catch (ClassCastException e){
+            throw new ClassCastException(a.toString() + "must implement listener");
+        }
+    }
 
     @Nullable
     @Override
@@ -174,6 +189,8 @@ public class PhotoGalleryFragment extends Fragment {
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
 //            ft.replace(R.id.viewP, lookPhotoFragment);
 //            ft.commit();
+
+            listener.onSelected(mItems.get(getLayoutPosition()));
         }
     }
 
