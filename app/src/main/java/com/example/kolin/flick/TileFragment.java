@@ -43,7 +43,7 @@ public class TileFragment extends Fragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()), parent);
+            return new ViewHolder(LayoutInflater.from(parent.getContext()), parent, fl);
         }
 
         @Override
