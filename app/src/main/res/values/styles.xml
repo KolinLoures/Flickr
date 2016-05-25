@@ -9,7 +9,12 @@
         <!-- Dark Indigo -->
         <item name="colorAccent">#00B0FF</item>
         <!-- Blue -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
     <style name="AppTheme" parent="AppTheme.Base"></style>
+
+
+
 
 </resources>

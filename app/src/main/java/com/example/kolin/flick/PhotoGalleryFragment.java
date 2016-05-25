@@ -134,6 +134,7 @@ public class PhotoGalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
 
@@ -186,16 +187,16 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            LookPhotoFragment lookPhotoFragment = new LookPhotoFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList("LIST", (ArrayList<? extends Parcelable>) mItems);
-            int position = getLayoutPosition();
-            bundle.putInt("pos", position);
-            lookPhotoFragment.setArguments(bundle);
-
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.container, lookPhotoFragment);
-            ft.commit();
+//            LookPhotoFragment lookPhotoFragment = new LookPhotoFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelableArrayList("LIST", (ArrayList<? extends Parcelable>) mItems);
+//            int position = getLayoutPosition();
+//            bundle.putInt("pos", position);
+//            lookPhotoFragment.setArguments(bundle);
+//
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//            ft.replace(R.id.container, lookPhotoFragment);
+//            ft.commit();
         }
     }
 

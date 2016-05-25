@@ -18,8 +18,17 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.example.kolin.flick.UpdateService"
-            android:exported="false"/>
+        <activity
+            android:name=".DetailActivity"
+            android:parentActivityName=".PhotoGalleryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".PhotoGalleryActivity" />
+        </activity>
+
+        <service
+            android:name=".UpdateService"
+            android:exported="false" />
 
     </application>
 
