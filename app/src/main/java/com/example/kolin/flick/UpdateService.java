@@ -52,12 +52,8 @@ public class UpdateService extends IntentService {
             return;
         }
         Intent in = new Intent(ACTION);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
-
+        RetrofitSingleton.getInstance();
+        MyApiEndpointInterface myApiEndpointInterface = RetrofitSingleton.getMyApi();
         Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
         try {
             response = call.execute();

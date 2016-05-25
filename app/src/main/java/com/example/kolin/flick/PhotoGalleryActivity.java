@@ -109,7 +109,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     public void setupViewPager(ViewPager viewPager){
         Adapter adapter = new Adapter(getSupportFragmentManager());
-       // adapter.addFragment(new PhotoGalleryFragment(), "List");
+        adapter.addFragment(new PhotoGalleryFragment(), "List");
         adapter.addFragment(new TileFragment(),"Tile");
         adapter.addFragment(new CardFragment(), "Card");
         viewPager.setAdapter(adapter);

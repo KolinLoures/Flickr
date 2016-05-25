@@ -37,7 +37,7 @@ public class CardFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         recyclerView.setPadding(16, 16, 16, 16);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         return recyclerView;
     }
 
@@ -52,7 +52,9 @@ public class CardFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()), parent);
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View itemView = inflater.inflate(R.layout.item_card, parent, false);
+            return new ViewHolder(itemView);
         }
 
         @Override
@@ -71,8 +73,8 @@ public class CardFragment extends Fragment {
 
         private ImageView imageView;
 
-        public ViewHolder(LayoutInflater inflater,ViewGroup itemView) {
-            super(inflater.inflate(R.layout.item_card, itemView));
+        public ViewHolder(View itemView) {
+            super(itemView);
             imageView = (ImageView)itemView.findViewById(R.id.card_image);
             imageView.setOnClickListener(this);
         }

@@ -1,22 +1,17 @@
 package com.example.kolin.flick;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,9 +35,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PhotoGalleryFragment";
-
-    private static final String URL = "https://api.flickr.com/services/rest/";
     private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
+
 
     private SwipeRefreshLayout swipeContainer;
 
@@ -65,19 +58,8 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Log.i(TAG, "Background thread started");
-
-
-
-
-        UpdateService.setServiceAlarm(getActivity(), true);
-
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        client = new OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .build();
         adapter = new PhotoAdapter();
+        UpdateService.setServiceAlarm(getActivity(), true);
         load();
     }
 
@@ -104,13 +86,8 @@ public class PhotoGalleryFragment extends Fragment {
     };
 
     public void load(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        MyApiEndpointInterface myApiEndpointInterface = retrofit.create(MyApiEndpointInterface.class);
-
+        Retrofit retrofit = RetrofitSingleton.getInstance();
+        MyApiEndpointInterface myApiEndpointInterface = RetrofitSingleton.getMyApi();
         Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
 
         call.enqueue(new Callback<Photo>() {
@@ -195,7 +172,7 @@ public class PhotoGalleryFragment extends Fragment {
 //            lookPhotoFragment.setArguments(bundle);
 //
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
-//            ft.replace(R.id.container, lookPhotoFragment);
+//            ft.replace(R.id.viewP, lookPhotoFragment);
 //            ft.commit();
         }
     }
