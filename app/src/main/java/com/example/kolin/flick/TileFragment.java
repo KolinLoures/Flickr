@@ -1,10 +1,7 @@
 package com.example.kolin.flick;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
+import android.app.Activity;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,18 +14,36 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class TileFragment extends Fragment {
 
 
-    private List<Photo_> items = new ArrayList<>();
     private RecyclerView recyclerView;
     private TileAdapter adapter;
 
+    private ArrayList<Photo_> photos;
+
+    public OnClickTileItem listenerTile;
+
     public TileFragment() {
         // Required empty public constructor
+    }
+
+
+    public interface OnClickTileItem{
+        void onSelectedTileItem(Photo_ photo);
+    }
+
+    @Override
+    public void onAttach(Activity a) {
+        super.onAttach(a);
+
+        try{
+            listenerTile = (OnClickTileItem) a;
+        } catch (ClassCastException e){
+            throw new ClassCastException(a.toString() + "must implement listener");
+        }
     }
 
     public static TileFragment newInstance(List<Photo_> list){
@@ -44,6 +59,8 @@ public class TileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ArrayList<Photo_> list = getArguments().getParcelableArrayList("list");
+        photos = new ArrayList<>();
+        photos.addAll(list);
         adapter = new TileAdapter(list);
 
     }
@@ -53,10 +70,10 @@ public class TileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
-
-        recyclerView. setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        recyclerView.setPadding(16, 16, 16, 16);
         recyclerView.setAdapter(adapter);
+
+        recyclerView.setPadding(16, 16, 16, 16);
+        recyclerView. setLayoutManager(new GridLayoutManager(getActivity(), 2));
         return recyclerView;
 
     }
@@ -68,8 +85,7 @@ public class TileFragment extends Fragment {
         private List<Photo_> galleryItems;
 
         public TileAdapter(List<Photo_> list) {
-            galleryItems = new ArrayList<>();
-
+            galleryItems = new ArrayList<>(list);
         }
 
         @Override
@@ -101,11 +117,11 @@ public class TileFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return 18;
+            return galleryItems.size();
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private ImageView imageView;
         private TextView textView;
@@ -119,9 +135,8 @@ public class TileFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Context context = v.getContext();
-            Intent intent = new Intent(context, DetailActivity.class);
-            context.startActivity(intent);
+            Photo_ p = photos.get(getAdapterPosition());
+            listenerTile.onSelectedTileItem(p);
         }
 
     }

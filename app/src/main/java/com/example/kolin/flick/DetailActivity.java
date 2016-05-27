@@ -26,7 +26,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
-            p = (Photo_) bundle.get("Photo");
+            p = (Photo_) bundle.get("photoObj");
         }
 
         Picasso.with(getApplicationContext()).load(p.getUrlS())

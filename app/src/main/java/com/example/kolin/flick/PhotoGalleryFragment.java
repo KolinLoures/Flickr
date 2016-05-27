@@ -61,7 +61,7 @@ public class PhotoGalleryFragment extends Fragment {
         Log.i(TAG, "Background thread started");
         adapter = new PhotoAdapter();
         UpdateService.setServiceAlarm(getActivity(), true);
-//        load();
+        load();
     }
 
 
@@ -131,7 +131,7 @@ public class PhotoGalleryFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                load();
+                load();
             }
         });
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,

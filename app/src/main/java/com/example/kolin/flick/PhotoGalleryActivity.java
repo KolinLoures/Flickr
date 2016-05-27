@@ -3,6 +3,7 @@ package com.example.kolin.flick;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -16,11 +17,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +27,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
-public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGalleryFragment.OnSelectedListener {
+public class PhotoGalleryActivity extends AppCompatActivity implements
+        PhotoGalleryFragment.OnSelectedListener,
+        TileFragment.OnClickTileItem {
 
 
     private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
@@ -39,6 +39,7 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
 
 
     private List<Photo_> list;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +72,10 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewP);
-        setupViewPager(viewPager);
+        viewPager = (ViewPager) findViewById(R.id.viewP);
 
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+
 
         FloatingActionButton floatingActionButton = (FloatingActionButton)
                 findViewById(R.id.fab);
@@ -87,6 +86,11 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
                 Snackbar.make(v, "Holla!", Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
     }
 
     @Override
@@ -113,7 +117,7 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new PhotoGalleryFragment(), "List");
         adapter.addFragment(TileFragment.newInstance(list),"Tile");
-        adapter.addFragment(new CardFragment(), "Card");
+        adapter.addFragment(CardFragment.newInstace(list), "Card");
         viewPager.setAdapter(adapter);
     }
 
@@ -125,7 +129,14 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
         startActivity(intent);
     }
 
-    static class Adapter extends FragmentPagerAdapter{
+    @Override
+    public void onSelectedTileItem(Photo_ photo) {
+        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+        intent.putExtra("photoObj", photo);
+        startActivity(intent);
+    }
+
+    static class Adapter extends FragmentPagerAdapter {
 
         private final List<Fragment> fragmentList = new ArrayList<>();
         private final List<String> fragmentTitleList = new ArrayList<>();
@@ -142,12 +153,6 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
         @Override
         public int getCount() {
             return fragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title, Bundle args){
-            fragment.setArguments(args);
-            fragmentList.add(fragment);
-            fragmentTitleList.add(title);
         }
 
         public void addFragment(Fragment fragment, String title){
@@ -170,6 +175,9 @@ public class PhotoGalleryActivity extends AppCompatActivity implements PhotoGall
             public void onResponse(Call<Photo> call, Response<Photo> response) {
                 Photos photos = response.body().getPhotos();
                 list.addAll(photos.getPhoto());
+                setupViewPager(viewPager);
+                TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+                tabs.setupWithViewPager(viewPager);
             }
 
             @Override
