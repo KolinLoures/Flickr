@@ -3,9 +3,8 @@ package com.example.kolin.flick;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,50 +14,90 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class TileFragment extends Fragment {
+
+
+    private List<Photo_> items = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private TileAdapter adapter;
 
     public TileFragment() {
         // Required empty public constructor
+    }
+
+    public static TileFragment newInstance(List<Photo_> list){
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("list", new ArrayList<Photo_>(list));
+        TileFragment fragment = new TileFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ArrayList<Photo_> list = getArguments().getParcelableArrayList("list");
+        adapter = new TileAdapter(list);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
-        TileAdapter adapter = new TileAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
 
-        recyclerView.setPadding(16, 16, 16, 16);
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+
         recyclerView. setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
+        recyclerView.setPadding(16, 16, 16, 16);
+        recyclerView.setAdapter(adapter);
         return recyclerView;
+
     }
 
-    public static class TileAdapter extends RecyclerView.Adapter{
 
 
-        private static final int LENGTH = 18;
+    public class TileAdapter extends RecyclerView.Adapter<ViewHolder>{
 
+        private List<Photo_> galleryItems;
+
+        public TileAdapter(List<Photo_> list) {
+            galleryItems = new ArrayList<>();
+
+        }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View itemView = inflater.inflate(R.layout.item_tile, parent, false);
             return new ViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Photo_ item = galleryItems.get(position);
+            holder.textView.setText(item.getTitle());
+            Picasso.with(getActivity()).load(item.getUrlS())
+                    .placeholder(R.drawable.icc_plus)
+                    .into(holder.imageView);
         }
+
+        public void clear(){
+            galleryItems.clear();
+            notifyDataSetChanged();
+        }
+
+        public void add(List<Photo_> list){
+            galleryItems.addAll(list);
+            notifyDataSetChanged();
+        }
+
 
         @Override
         public int getItemCount() {
@@ -84,6 +123,7 @@ public class TileFragment extends Fragment {
             Intent intent = new Intent(context, DetailActivity.class);
             context.startActivity(intent);
         }
+
     }
 
 }

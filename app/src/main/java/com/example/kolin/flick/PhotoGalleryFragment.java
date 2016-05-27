@@ -24,12 +24,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by kolin on 20.05.2016.
@@ -52,7 +50,7 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     public interface OnSelectedListener {
-        void onSelected(Photo_ p);
+        void onSelected(List<Photo_> list, int position);
     }
 
 
@@ -63,7 +61,7 @@ public class PhotoGalleryFragment extends Fragment {
         Log.i(TAG, "Background thread started");
         adapter = new PhotoAdapter();
         UpdateService.setServiceAlarm(getActivity(), true);
-        load();
+//        load();
     }
 
 
@@ -94,7 +92,6 @@ public class PhotoGalleryFragment extends Fragment {
         Retrofit retrofit = RetrofitSingleton.getInstance();
         MyApiEndpointInterface myApiEndpointInterface = RetrofitSingleton.getMyApi();
         Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
-
         call.enqueue(new Callback<Photo>() {
             @Override
             public void onResponse(Call<Photo> call, Response<Photo> response) {
@@ -134,7 +131,7 @@ public class PhotoGalleryFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                load();
+//                load();
             }
         });
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -179,18 +176,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-//            LookPhotoFragment lookPhotoFragment = new LookPhotoFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelableArrayList("LIST", (ArrayList<? extends Parcelable>) mItems);
-//            int position = getLayoutPosition();
-//            bundle.putInt("pos", position);
-//            lookPhotoFragment.setArguments(bundle);
-//
-//            FragmentTransaction ft = getFragmentManager().beginTransaction();
-//            ft.replace(R.id.viewP, lookPhotoFragment);
-//            ft.commit();
-
-            listener.onSelected(mItems.get(getLayoutPosition()));
+            listener.onSelected(mItems, getLayoutPosition());
         }
     }
 
