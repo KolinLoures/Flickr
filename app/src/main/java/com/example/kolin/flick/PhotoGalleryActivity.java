@@ -25,6 +25,7 @@ import com.example.kolin.flick.data.MyApiEndpointInterface;
 import com.example.kolin.flick.data.Photo;
 import com.example.kolin.flick.data.Photo_;
 import com.example.kolin.flick.data.Photos;
+import com.example.kolin.flick.data.RetrofitSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,7 @@ public class PhotoGalleryActivity extends AppCompatActivity implements
 //        Bundle bundle = new Bundle();
 //        bundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list);
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new PhotoGalleryFragment(), "List");
+        adapter.addFragment(PhotoGalleryFragment.newInstance(list), "List");
         adapter.addFragment(TileFragment.newInstance(list),"Tile");
         adapter.addFragment(CardFragment.newInstace(list), "Card");
         viewPager.setAdapter(adapter);

@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileFragment extends Fragment {
+public class TileFragment extends Fragment implements PhotoContract.View {
 
 
     private RecyclerView recyclerView;
@@ -25,10 +25,28 @@ public class TileFragment extends Fragment {
 
     private ArrayList<Photo_> photos;
 
+    private PhotoContract.UserActionListener actionListener;
+
     public OnClickTileItem listenerTile;
 
     public TileFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void showPhotos(List<Photo_> list) {
+        adapter.clear();
+        adapter.add(list);
+    }
+
+    @Override
+    public void showPhotoDetail(Photo_ p) {
+        listenerTile.onSelectedTileItem(p);
+    }
+
+    @Override
+    public void showLookPhotos(List<Photo_> list, int pos) {
+
     }
 
 
@@ -61,6 +79,7 @@ public class TileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         ArrayList<Photo_> list = getArguments().getParcelableArrayList("list");
         photos = new ArrayList<>();
+        actionListener = new PhotoPresenter(this);
         photos.addAll(list);
         adapter = new TileAdapter(list);
 
@@ -137,7 +156,7 @@ public class TileFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Photo_ p = photos.get(getAdapterPosition());
-            listenerTile.onSelectedTileItem(p);
+            actionListener.openLookPhotoDetail(p);
         }
 
     }

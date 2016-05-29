@@ -19,30 +19,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.kolin.flick.data.MyApiEndpointInterface;
-import com.example.kolin.flick.data.Photo;
 import com.example.kolin.flick.data.Photo_;
-import com.example.kolin.flick.data.Photos;
 import com.example.kolin.flick.data.UpdateService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-
 /**
  * Created by kolin on 20.05.2016.
  */
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends Fragment implements PhotoContract.View {
     private static final String TAG = "PhotoGalleryFragment";
-    private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
-
 
     private SwipeRefreshLayout swipeContainer;
+
+    private PhotoContract.UserActionListener actionListener;
 
     private OnSelectedListener listener;
 
@@ -50,9 +42,14 @@ public class PhotoGalleryFragment extends Fragment {
     public RecyclerView mPhotoRecyclerView;
     private PhotoAdapter adapter;
 
-    public static PhotoGalleryFragment newInstance() {
-        return new PhotoGalleryFragment();
+    public static PhotoGalleryFragment newInstance(List<Photo_> list) {
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("list", new ArrayList<Photo_>(list));
+        PhotoGalleryFragment fragment = new PhotoGalleryFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
+
 
     public interface OnSelectedListener {
         void onSelected(List<Photo_> list, int position);
@@ -64,12 +61,16 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Log.i(TAG, "Background thread started");
+
+        actionListener = new PhotoPresenter(this);
         adapter = new PhotoAdapter();
+
+        ArrayList<Photo_> list = getArguments().getParcelableArrayList("list");
+        mItems = new ArrayList<>(list);
+        adapter.add(mItems);
         UpdateService.setServiceAlarm(getActivity(), true);
-        load();
+
     }
-
-
 
 
     @Override
@@ -78,6 +79,24 @@ public class PhotoGalleryFragment extends Fragment {
         IntentFilter filter = new IntentFilter(UpdateService.ACTION);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(testReceiver, filter);
     }
+
+    @Override
+    public void showPhotos(List<Photo_> list) {
+        adapter.clear();
+        adapter.add(list);
+        swipeContainer.setRefreshing(false);
+    }
+
+    @Override
+    public void showPhotoDetail(Photo_ p) {
+
+    }
+
+    @Override
+    public void showLookPhotos(List<Photo_> list, int pos) {
+        listener.onSelected(list, pos);
+    }
+
 
     @Override
     public void onPause() {
@@ -93,26 +112,7 @@ public class PhotoGalleryFragment extends Fragment {
         }
     };
 
-    public void load(){
-        Retrofit retrofit = RetrofitSingleton.getInstance();
-        MyApiEndpointInterface myApiEndpointInterface = RetrofitSingleton.getMyApi();
-        Call<Photo> call = myApiEndpointInterface.getRecent(API_KEY, "json", 1, "url_s");
-        call.enqueue(new Callback<Photo>() {
-            @Override
-            public void onResponse(Call<Photo> call, Response<Photo> response) {
-                adapter.clear();
-                Photos photos = response.body().getPhotos();
-                List<Photo_> list = photos.getPhoto();
-                adapter.add(list);
-                swipeContainer.setRefreshing(false);
-            }
 
-            @Override
-            public void onFailure(Call<Photo> call, Throwable t) {
-
-            }
-        });
-    }
 
     @Override
     public void onAttach(Activity a) {
@@ -128,7 +128,6 @@ public class PhotoGalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
 
@@ -136,7 +135,7 @@ public class PhotoGalleryFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                load();
+                    actionListener.loadPhotos();
             }
         });
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -181,7 +180,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            listener.onSelected(mItems, getLayoutPosition());
+            actionListener.openLookPhoto(mItems, getLayoutPosition());
         }
     }
 
@@ -222,7 +221,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         public void add(List<Photo_> galleryItems) {
             mGalleryItems.addAll(galleryItems);
-            mItems.addAll(mGalleryItems);
             notifyDataSetChanged();
         }
 

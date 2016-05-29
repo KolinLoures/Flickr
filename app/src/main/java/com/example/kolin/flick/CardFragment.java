@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CardFragment extends Fragment {
+public class CardFragment extends Fragment implements PhotoContract.View {
 
 
     private CardAdapter adapter;
+
+    private PhotoContract.UserActionListener actionListener;
 
     public CardFragment() {
         // Required empty public constructor
@@ -43,6 +45,7 @@ public class CardFragment extends Fragment {
         super.onCreate(savedInstanceState);
         ArrayList<Photo_> list = getArguments().getParcelableArrayList("list");
         adapter = new CardAdapter(list);
+        actionListener = new PhotoPresenter(this);
     }
 
     @Override
@@ -61,6 +64,21 @@ public class CardFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+    }
+
+    @Override
+    public void showPhotos(List<Photo_> list) {
+
+    }
+
+    @Override
+    public void showPhotoDetail(Photo_ p) {
+
+    }
+
+    @Override
+    public void showLookPhotos(List<Photo_> list, int pos) {
 
     }
 

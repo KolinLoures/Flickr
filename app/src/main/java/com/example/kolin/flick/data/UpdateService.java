@@ -12,8 +12,6 @@ import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.example.kolin.flick.RetrofitSingleton;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
