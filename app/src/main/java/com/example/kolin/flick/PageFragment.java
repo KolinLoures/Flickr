@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.kolin.flick.data.Photo_;
 import com.squareup.picasso.Picasso;
 
 

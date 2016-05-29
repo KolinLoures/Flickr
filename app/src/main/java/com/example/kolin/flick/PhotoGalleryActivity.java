@@ -21,6 +21,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.kolin.flick.data.MyApiEndpointInterface;
+import com.example.kolin.flick.data.Photo;
+import com.example.kolin.flick.data.Photo_;
+import com.example.kolin.flick.data.Photos;
+
 import java.util.ArrayList;
 import java.util.List;
 

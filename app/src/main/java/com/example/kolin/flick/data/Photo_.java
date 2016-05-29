@@ -1,5 +1,5 @@
 
-package com.example.kolin.flick;
+package com.example.kolin.flick.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

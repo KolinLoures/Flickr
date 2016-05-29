@@ -1,5 +1,5 @@
 
-package com.example.kolin.flick;
+package com.example.kolin.flick.data;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.example.kolin.flick;
+package com.example.kolin.flick.data;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -7,12 +7,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.os.ResultReceiver;
 import android.util.Log;
+
+import com.example.kolin.flick.RetrofitSingleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,8 +20,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by n.kirilov on 24.05.2016.
@@ -31,7 +29,7 @@ public class UpdateService extends IntentService {
     private static final String URL = "https://api.flickr.com/services/rest/";
     private static final String API_KEY = "a09ef8d2480f136858052df0d219376b";
 
-    public static final String ACTION = "com.example.kolin.flick.UpdateService";
+    public static final String ACTION = "com.example.kolin.flick.data.UpdateService";
 
 
     public UpdateService() {

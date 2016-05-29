@@ -19,6 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.kolin.flick.data.MyApiEndpointInterface;
+import com.example.kolin.flick.data.Photo;
+import com.example.kolin.flick.data.Photo_;
+import com.example.kolin.flick.data.Photos;
+import com.example.kolin.flick.data.UpdateService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

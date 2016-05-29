@@ -1,5 +1,6 @@
 package com.example.kolin.flick;
 
+import com.example.kolin.flick.data.MyApiEndpointInterface;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
